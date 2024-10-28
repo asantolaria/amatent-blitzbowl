@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  sqlite-db:
+    image: alpine:latest
+    command: sh -c 'apk add --no-cache sqlite && exec sqlite3 /data/mydatabase.db'
+    volumes:
+      - ./data:/data
