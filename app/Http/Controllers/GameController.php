@@ -66,7 +66,7 @@ class GameController extends Controller
             // volver a la jornada
             return redirect()->route('matchdays.show', $request->matchday_id)->with('success', 'Partido actualizado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('matchdays.show', $request->matchday_id)->with('error', 'Error actualizando el Partido: ' . $e->getMessage());
+            return redirect()->route('matchdays.show', $matchday->id)->with('error', 'Error actualizando el partido: ' . $e->getMessage());
         }
     }
 

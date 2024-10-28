@@ -28,10 +28,12 @@ class TeamController extends Controller
                 'coach_id' => 'nullable|exists:coaches,id',
             ]);
 
+            Team::create($request->all());
+
             // volver a la liga
-            return redirect()->route('leagues.show', $request->league_id)->with('success', 'Team created successfully.');
+            return redirect()->route('leagues.show', $request->league_id)->with('success', 'Equipo creado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.show', $request->league_id)->with('error', 'Error creating team: ' . $e->getMessage());
+            return redirect()->route('leagues.show', $request->league_id)->with('error', 'Error creatdo Equipo: ' . $e->getMessage());
         }
     }
 
@@ -49,15 +51,19 @@ class TeamController extends Controller
 
     public function update(Request $request, Team $team)
     {
-        $request->validate([
-            'name' => 'required|max:255|unique:teams,name,' . $team->id,
-            'race' => 'nullable|string',
-            'league_id' => 'required|exists:leagues,id',
-            'coach_id' => 'nullable|exists:coaches,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|max:255|unique:teams,name,' . $team->id,
+                'race' => 'nullable|string',
+                'league_id' => 'required|exists:leagues,id',
+                'coach_id' => 'nullable|exists:coaches,id',
+            ]);
 
-        $team->update($request->all());
-        return redirect()->route('teams.index')->with('success', 'Team updated successfully.');
+            $team->update($request->all());
+            return redirect()->route('teams.index')->with('success', 'Equipo actualizado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('teams.index')->with('error', 'Error actualizando equipo: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Team $team)
@@ -65,9 +71,9 @@ class TeamController extends Controller
         try {
             $team->delete();
             // redirect a la liga
-            return redirect()->route('leagues.show', $team->league_id)->with('success', 'Team deleted successfully.');
+            return redirect()->route('leagues.show', $team->league_id)->with('success', 'Equipo eliminado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.show', $team->league_id)->with('error', 'Error deleting team: ' . $e->getMessage());
+            return redirect()->route('leagues.show', $team->league_id)->with('error', 'Error eliminando equipo: ' . $e->getMessage());
         }
     }
 }

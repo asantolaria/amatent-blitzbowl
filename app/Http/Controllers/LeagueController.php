@@ -183,9 +183,13 @@ class LeagueController extends Controller
                             ($game->team_a_id === $teamB->id && $game->team_b_id === $teamA->id);
                     })->count();
 
-                    $matrix[$teamA->name][$teamB->name] = $countMatches;
+                    $namea = $teamA->name . " (" . $teamA->coach_name . ")";
+                    $nameb = $teamB->name . " (" . $teamB->coach_name . ")";
+                    $matrix[$namea][$nameb] = $countMatches;
                 } else {
-                    $matrix[$teamA->name][$teamB->name] = '-';
+                    $namea = $teamA->name . " (" . $teamA->coach_name . ")";
+                    $nameb = $teamB->name . " (" . $teamB->coach_name . ")";
+                    $matrix[$namea][$nameb] = '-';
                 }
             }
         }

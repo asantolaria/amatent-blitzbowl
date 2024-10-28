@@ -98,3 +98,8 @@
     color: #CCC !important;
     font-style: italic;
 }
+
+.bg-green-300 {
+    background-color: #d4edda;
+    /* Color verde claro */
+}

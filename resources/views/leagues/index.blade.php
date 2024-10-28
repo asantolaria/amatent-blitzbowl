@@ -32,7 +32,9 @@
                         <th>Descripción</th>
                         <th>Año de la temporada</th>
                         <th>Estado</th>
+                        @if(Auth::user() && Auth::user()->admin)
                         <th>Acciones</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>

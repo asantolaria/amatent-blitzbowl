@@ -18,11 +18,11 @@
 </div>
 @endif
 
-<h2>Detalles de Jornada {{ $matchday->description }}</h2>
+<h2>Detalles de {{ $matchday->description }}</h2>
 
 <ul>
     <li><strong>Fecha:</strong> {{ $matchday->date }}</li>
-    <li><strong>Descripción:</strong> {{ $matchday->description }}</li>
+    <li><strong>Descripción:</strong> <a href="{{ route('matchdays.show', $matchday->id) }}">{{ $matchday->description }}</a></li>
     <li><strong>Liga:</strong> <a href="{{ route('leagues.show', $matchday->league->id) }}">{{ $matchday->league->name }}</a></li>
 </ul>
 
@@ -59,6 +59,7 @@
                 @elseif($match->loser() && $match->loser()->id == $match->team_a_id)
                 <h4><span class="badge badge-danger">{{ $match->teamA->name }}</span></h4>
                 @endif
+                {{$match->teamA->coach_name}}
             </td>
             <td>
                 <!-- Verificar si el equipo visitante es el ganador o el perdedor -->
@@ -69,6 +70,7 @@
                 @elseif($match->loser() && $match->loser()->id == $match->team_b_id)
                 <h4><span class="badge badge-danger">{{ $match->teamB->name }}</span></h4>
                 @endif
+                {{$match->teamB->coach_name}}
             </td>
             <td>{{ $match->touchdowns_a }}</td>
             <td>{{ $match->touchdowns_b }}</td>
@@ -128,7 +130,7 @@
                                 <label for="team_a_id">Equipo Local</label>
                                 <select class="form-control" id="team_a_id" name="team_a_id" required>
                                     @foreach ($teams as $team)
-                                    <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                    <option value="{{ $team->id }}">{{ $team->name }} ({{$team->coach_name}})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -157,7 +159,7 @@
                                 <label for="team_b_id">Equipo Visitante</label>
                                 <select class="form-control" id="team_b_id" name="team_b_id" required>
                                     @foreach ($teams as $team)
-                                    <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                    <option value="{{ $team->id }}">{{ $team->name }} ({{$team->coach_name}})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -215,7 +217,7 @@
                                 <label for="team_a_id">Equipo Local</label>
                                 <select class="form-control" id="team_a_id" name="team_a_id" required>
                                     @foreach ($teams as $team)
-                                    <option value="{{ $team->id }}" @if($team->id == $match->team_a_id) selected @endif>{{ $team->name }}</option>
+                                    <option value="{{ $team->id }}" @if($team->id == $match->team_a_id) selected @endif>{{ $team->name }} ({{$team->coach_name}})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -244,7 +246,7 @@
                                 <label for="team_b_id">Equipo Visitante</label>
                                 <select class="form-control" id="team_b_id" name="team_b_id" required>
                                     @foreach ($teams as $team)
-                                    <option value="{{ $team->id }}" @if($team->id == $match->team_b_id) selected @endif>{{ $team->name }}</option>
+                                    <option value="{{ $team->id }}" @if($team->id == $match->team_b_id) selected @endif>{{ $team->name }} ({{$team->coach_name}})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -261,8 +263,8 @@
                                 <input type="number" class="form-control" id="cards_b" name="cards_b" value="{{ $match->cards_b }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="score_a">Puntuación Visitante</label>
-                                <input type="number" class="form-control" id="score_a" name="score_a" value="{{ $match->score_a }}" required>
+                                <label for="score_b">Puntuación Visitante</label>
+                                <input type="number" class="form-control" id="score_b" name="score_b" value="{{ $match->score_b }}" required>
                             </div>
                         </div>
                     </div>

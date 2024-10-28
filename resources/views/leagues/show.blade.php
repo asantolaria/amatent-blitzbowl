@@ -27,61 +27,60 @@
     <li><strong>Estado:</strong> {{ $league->enabled ? 'Activa' : 'Desactivada' }}</li>
 </ul>
 
-<div class="container">
-    <!-- Tabs navigation -->
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <!-- Tab - Equipos -->
-        <li class="nav-item">
-            <a class="nav-link active" id="teams-tab" data-toggle="tab" href="#teams" role="tab" aria-controls="teams" aria-selected="true">
-                {{ __('Equipos') }}
-            </a>
-        </li>
 
-        <!-- Tab - Jornadas -->
-        <li class="nav-item">
-            <a class="nav-link" id="matchdays-tab" data-toggle="tab" href="#matchdays" role="tab" aria-controls="matchdays" aria-selected="false">
-                {{ __('Jornadas') }}
-            </a>
-        </li>
+<!-- Tabs navigation -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <!-- Tab - Equipos -->
+    <li class="nav-item">
+        <a class="nav-link active" id="teams-tab" data-toggle="tab" href="#teams" role="tab" aria-controls="teams" aria-selected="true">
+            {{ __('Equipos') }}
+        </a>
+    </li>
 
-        <!-- Tab - Clasificación -->
-        <li class="nav-item">
-            <a class="nav-link" id="standings-tab" data-toggle="tab" href="#standings" role="tab" aria-controls="standings" aria-selected="false">
-                {{ __('Clasificación') }}
-            </a>
-        </li>
+    <!-- Tab - Jornadas -->
+    <li class="nav-item">
+        <a class="nav-link" id="matchdays-tab" data-toggle="tab" href="#matchdays" role="tab" aria-controls="matchdays" aria-selected="false">
+            {{ __('Jornadas') }}
+        </a>
+    </li>
 
-        <!-- Tab - Emparejamientos -->
-        <li class="nav-item">
-            <a class="nav-link" id="pairings-tab" data-toggle="tab" href="#pairings" role="tab" aria-controls="pairings" aria-selected="false">
-                {{ __('Emparejamientos') }}
-            </a>
-        </li>
-    </ul>
+    <!-- Tab - Clasificación -->
+    <li class="nav-item">
+        <a class="nav-link" id="standings-tab" data-toggle="tab" href="#standings" role="tab" aria-controls="standings" aria-selected="false">
+            {{ __('Clasificación') }}
+        </a>
+    </li>
 
-    <!-- Tabs content, wrapped in the same container to ensure alignment below the tabs -->
-    <div class="tab-content mt-3" id="myTabContent">
-        <!-- Tab - Equipos -->
-        <div class="tab-pane fade show active" id="teams" role="tabpanel" aria-labelledby="teams-tab">
-            @include('leagues.tabs.teams')
-        </div>
+    <!-- Tab - Emparejamientos -->
+    <li class="nav-item">
+        <a class="nav-link" id="pairings-tab" data-toggle="tab" href="#pairings" role="tab" aria-controls="pairings" aria-selected="false">
+            {{ __('Emparejamientos') }}
+        </a>
+    </li>
+</ul>
 
-        <!-- Tab - Jornadas -->
-        <div class="tab-pane fade" id="matchdays" role="tabpanel" aria-labelledby="matchdays-tab">
-            @include('leagues.tabs.matchdays')
-        </div>
+<!-- Tabs content, wrapped in the same container to ensure alignment below the tabs -->
+<div class="tab-content mt-3" id="myTabContent">
+    <!-- Tab - Equipos -->
+    <div class="tab-pane fade show active" id="teams" role="tabpanel" aria-labelledby="teams-tab">
+        @include('leagues.tabs.teams')
+    </div>
 
-        <!-- Tab - Clasificación -->
-        <div class="tab-pane fade" id="standings" role="tabpanel" aria-labelledby="standings-tab">
-            @include('leagues.tabs.standings')
-        </div>
+    <!-- Tab - Jornadas -->
+    <div class="tab-pane fade" id="matchdays" role="tabpanel" aria-labelledby="matchdays-tab">
+        @include('leagues.tabs.matchdays')
+    </div>
+
+    <!-- Tab - Clasificación -->
+    <div class="tab-pane fade" id="standings" role="tabpanel" aria-labelledby="standings-tab">
+        @include('leagues.tabs.standings')
+    </div>
 
 
 
-        <!-- Tab - Emparejamientos -->
-        <div class="tab-pane fade" id="pairings" role="tabpanel" aria-labelledby="pairings-tab">
-            @include('leagues.tabs.pairings')
-        </div>
+    <!-- Tab - Emparejamientos -->
+    <div class="tab-pane fade" id="pairings" role="tabpanel" aria-labelledby="pairings-tab">
+        @include('leagues.tabs.pairings')
     </div>
 </div>
 
