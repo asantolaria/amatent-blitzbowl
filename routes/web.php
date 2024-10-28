@@ -97,4 +97,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/matchdays/{matchday}/update', [MatchdayController::class, 'update'])->name('matchdays.update');
     // Eliminar jornada
     Route::get('/matchdays/{matchday}/delete', [MatchdayController::class, 'destroy'])->name('matchdays.delete');
+
+    // Rutas de Partidos (Game)
+    // Crear partido
+    Route::post('/games/store', [GameController::class, 'store'])->name('games.store');
+    // Editar partido
+    Route::put('/games/{game}/update', [GameController::class, 'update'])->name('games.update');
+    // Eliminar partido
+    Route::get('/games/{game}/delete', [GameController::class, 'destroy'])->name('games.delete');
 });
