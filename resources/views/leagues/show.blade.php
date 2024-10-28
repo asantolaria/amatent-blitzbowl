@@ -63,204 +63,24 @@
     <div class="tab-content mt-3" id="myTabContent">
         <!-- Tab - Equipos -->
         <div class="tab-pane fade show active" id="teams" role="tabpanel" aria-labelledby="teams-tab">
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered" id="dataTableTeams" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Entrenador</th>
-                            <th>Nombre</th>
-                            <th>Raza</th>
-                            @if(Auth::user() && Auth::user()->admin)
-                            <th>Acciones</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($league->teams as $team)
-                        <tr>
-                            <td>{{ $team->coach_name ?? 'Sin entrenador' }}</td>
-                            <td>
-                                <a href="{{ route('teams.show', ['team' => $team->id]) }}">{{ $team->name }}</a>
-                            </td>
-                            <td>{{ $team->race }}</td>
-                            @if(Auth::user() && Auth::user()->admin)
-                            <td>
-                                <div class="d-flex">
-                                    <!-- Edit button -->
-                                    <button title="Editar" type="button" class="btn btn-sm btn-primary mr-1" data-toggle="modal" data-target="#editTeamModal{{ $team->id }}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-
-                                    <!-- Delete form -->
-                                    <form action="{{ route('teams.destroy', ['team' => $team->id]) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button title="Eliminar" type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                            @endif
-                        </tr>
-                        @endforeach
-
-                        <!-- Create new team -->
-                        @if(Auth::user() && Auth::user()->admin)
-                        <tr>
-                            <form action="{{ route('teams.store') }}" method="post">
-                                @csrf
-                                <td>
-                                    <input type="hidden" name="league_id" value="{{ $league->id }}">
-                                    <input type="text" name="coach_name" class="form-control" placeholder="Nombre del Entrenador">
-                                </td>
-                                <td>
-                                    <input type="text" name="name" class="form-control" placeholder="Nombre del equipo">
-                                </td>
-                                <td>
-                                    <input type="text" name="race" class="form-control" placeholder="Raza">
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </td>
-                            </form>
-                        </tr>
-                        @endif
-                    </tbody>
-                </table>
-
-            </div>
+            @include('leagues.tabs.teams')
         </div>
 
         <!-- Tab - Jornadas -->
         <div class="tab-pane fade" id="matchdays" role="tabpanel" aria-labelledby="matchdays-tab">
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered" id="dataTableMatchdays" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Descripción</th>
-                            <th>Fecha</th>
-                            @if(Auth::user() && Auth::user()->admin)
-                            <th>Acciones</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($league->matchdays as $matchday)
-                        <tr>
-                            <td>
-                                <a href="{{ route('matchdays.show', ['matchday' => $matchday->id]) }}">{{$matchday->description}}</a>
-                            </td>
-                            <td>{{ $matchday->date }}</td>
-                            @if (Auth::user() && Auth::user()->admin)
-                            <td class="d-flex">
-
-                                <!-- edit buttton showing modal -->
-                                <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#editMatchdayModal{{ $matchday->id }}" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-
-                                <!-- Delete form -->
-                                <form action="{{ route('matchdays.destroy', ['matchday' => $matchday->id]) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            @endif
-                        </tr>
-                        @endforeach
-
-                        <!-- Create new matchday -->
-                        @if(Auth::user() && Auth::user()->admin)
-
-                        <tr>
-
-                            <form action="{{ route('matchdays.store') }}" method="post">
-                                @csrf
-                                <td>
-                                    <input type="hidden" name="league_id" value="{{ $league->id }}">
-
-                                    <input type="text" name="description" class="form-control" placeholder="Descripción" required>
-                                </td>
-                                <td>
-                                    <input type="date" name="date" class="form-control" placeholder="Fecha" required>
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </td>
-                            </form>
-                        </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+            @include('leagues.tabs.matchdays')
         </div>
 
         <!-- Tab - Clasificación -->
         <div class="tab-pane fade" id="standings" role="tabpanel" aria-labelledby="standings-tab">
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered display" id="dataTableStandings" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Entrenador</th>
-                            <th>Equipo</th>
-                            <th title="Partidos Jugados">PJ</th>
-                            <th title="Partidos Ganados">PG</th>
-                            <th title="Partidos Empatados">PE</th>
-                            <th title="Partidos Perdidos">PP</th>
-                            <th title="Puntos">PTS</th>
-                            <th title="Touchdowns Anotados">Touchdowns</th>
-                            <th title="Cartas Obtenidas">Cartas</th>
-                            <th title="Lesiones Provocadas">Lesiones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($ranking as $team)
-                        <tr>
-                            <td>{{ $team['team']->coach_name ?? 'Sin entrenador' }}</td>
-                            <td>{{ $team['team']->name }}</td>
-                            <td>{{ $team['matches'] }}</td>
-                            <td>{{ $team['wins'] }}</td>
-                            <td>{{ $team['draws'] }}</td>
-                            <td>{{ $team['losses'] }}</td>
-                            <td>{{ $team['points'] }}</td>
-                            <td>{{ $team['touchdowns'] }}</td>
-                            <td>{{ $team['cards'] }}</td>
-                            <td>{{ $team['injuries'] }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            @include('leagues.tabs.standings')
         </div>
 
 
 
         <!-- Tab - Emparejamientos -->
         <div class="tab-pane fade" id="pairings" role="tabpanel" aria-labelledby="pairings-tab">
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered" id="dataTablePairings" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Jornada</th>
-                            <th>Local</th>
-                            <th>Visitante</th>
-                            <th>Resultado</th>
-                            @if(Auth::user() && Auth::user()->admin)
-                            <th>Acciones</th>
-                            @endif
-                        </tr>
-                    </thead>
-
-                </table>
-            </div>
+            @include('leagues.tabs.pairings')
         </div>
     </div>
 </div>
@@ -327,64 +147,5 @@
 @endif
 
 
-<!-- Incluir el JS de DataTables en tu vista -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#dataTableStandings').DataTable({
-            processing: true,
-            serverSide: true,
-            paging: false,
-            info: false,
-            lengthChange: false,
-            ajax: "{{ route('standings', ['league' => $league->id]) }}",
-            order: [
-                [6, 'desc']
-            ], // Ordena por la columna de puntos (7ª columna, índice 6) en orden descendente
-            columns: [{
-                    data: 'team.coach_name',
-                    name: 'team.coach_name'
-                },
-                {
-                    data: 'team.name',
-                    name: 'team.name'
-                },
-                {
-                    data: 'matches',
-                    name: 'matches'
-                },
-                {
-                    data: 'wins',
-                    name: 'wins'
-                },
-                {
-                    data: 'draws',
-                    name: 'draws'
-                },
-                {
-                    data: 'losses',
-                    name: 'losses'
-                },
-                {
-                    data: 'points',
-                    name: 'points'
-                },
-                {
-                    data: 'touchdowns',
-                    name: 'touchdowns'
-                },
-                {
-                    data: 'cards',
-                    name: 'cards'
-                },
-                {
-                    data: 'injuries',
-                    name: 'injuries'
-                }
-            ]
-        });
-    });
-</script>
 
 @endsection

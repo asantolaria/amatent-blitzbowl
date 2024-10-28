@@ -39,8 +39,8 @@ class LeagueController extends Controller
 
     public function show(League $league)
     {
-        $ranking = $this->ranking($league);
-        return view('leagues.show', compact('league', 'ranking'));
+        $pairings = $this->pairingMatrix($league);
+        return view('leagues.show', compact('league', 'pairings'));
     }
 
     public function standings(Request $request, League $league)
@@ -114,7 +114,7 @@ class LeagueController extends Controller
         }
     }
 
-    public function ranking(League $league)
+    private function ranking(League $league)
     {
         $matches = $league->matchdays()->with('games')->get()->pluck('games')->flatten();
         $teams = $league->teams;
@@ -166,5 +166,30 @@ class LeagueController extends Controller
         })->sortByDesc('points')->values();
 
         return $ranking;
+    }
+
+    private function pairingMatrix($league)
+    {
+        $teams = $league->teams;
+        $matches = $league->matchdays()->with('games')->get()->pluck('games')->flatten();
+
+        $matrix = [];
+
+        foreach ($teams as $teamA) {
+            foreach ($teams as $teamB) {
+                if ($teamA->id !== $teamB->id) {
+                    $countMatches = $matches->filter(function ($game) use ($teamA, $teamB) {
+                        return ($game->team_a_id === $teamA->id && $game->team_b_id === $teamB->id) ||
+                            ($game->team_a_id === $teamB->id && $game->team_b_id === $teamA->id);
+                    })->count();
+
+                    $matrix[$teamA->name][$teamB->name] = $countMatches;
+                } else {
+                    $matrix[$teamA->name][$teamB->name] = '-';
+                }
+            }
+        }
+
+        return $matrix;
     }
 }
