@@ -150,7 +150,7 @@ class LeagueController extends Controller
                 return $match->team_a_id == $team->id ? $match->injuries_a : ($match->team_b_id == $team->id ? $match->injuries_b : 0);
             });
 
-            $team_points = $team_wins->count() * 4 + $team_draws->count() * 2;
+            $team_points = $team_wins->count() * 4 + $team_draws->count() * 2 + $team_losses->count();
 
             return [
                 'team' => $team,
@@ -167,6 +167,7 @@ class LeagueController extends Controller
 
         return $ranking;
     }
+
 
     private function pairingMatrix($league)
     {

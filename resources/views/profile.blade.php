@@ -53,26 +53,6 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <!-- <div class="col-md-4">
-                        <div class="card-profile-stats">
-                            <span class="heading">22</span>
-                            <span class="description">Gladiadores</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card-profile-stats">
-                            <span class="heading">10</span>
-                            <span class="description">Torneos</span>
-                        </div>
-                    </div> -->
-                    <!-- <div class="col-md-4">
-                            <div class="card-profile-stats">
-                                <span class="heading">89</span>
-                                <span class="description">Comments</span>
-                            </div>
-                        </div> -->
-                </div>
             </div>
         </div>
 

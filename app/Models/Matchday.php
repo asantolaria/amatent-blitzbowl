@@ -21,4 +21,32 @@ class Matchday extends Model
     {
         return $this->hasMany(Game::class);
     }
+
+    public function next()
+    {
+        $output = Matchday::where('league_id', $this->league_id)
+            ->where('date', '>', $this->date)
+            ->orderBy('date', 'asc')
+            ->first();
+
+        if ($output) {
+            return $output;
+        } else {
+            return null;
+        }
+    }
+
+    public function previous()
+    {
+        $output = Matchday::where('league_id', $this->league_id)
+            ->where('date', '<', $this->date)
+            ->orderBy('date', 'desc')
+            ->first();
+
+        if ($output) {
+            return $output;
+        } else {
+            return null;
+        }
+    }
 }

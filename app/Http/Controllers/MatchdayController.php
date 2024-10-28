@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class MatchdayController extends Controller
 {
+    public function index()
+    {
+        $matchdays = Matchday::all();
+        return view('matchdays.index', compact('matchdays'));
+    }
 
 
     public function store(Request $request)

@@ -26,12 +26,39 @@ class Team extends Model
     // Partidos ganados
     public function gamesWon()
     {
-        return $this->games->where('winner_id', $this->id);
+        $games = $this->games();
+        $gamesWon = [];
+        foreach ($games as $game) {
+            if ($game->winner() == $this) {
+                $gamesWon[] = $game;
+            }
+        }
+        return $gamesWon;
     }
 
     // Partidos empatados
     public function gamesDrawn()
     {
-        return $this->games->where('winner_id', null)->where('touchdowns_a', '>', 0);
+        $games = $this->games();
+        $gamesDrawn = [];
+        foreach ($games as $game) {
+            if ($game->winner() == null) {
+                $gamesDrawn[] = $game;
+            }
+        }
+        return $gamesDrawn;
+    }
+
+    // Partidos perdidos
+    public function gamesLost()
+    {
+        $games = $this->games();
+        $gamesLost = [];
+        foreach ($games as $game) {
+            if ($game->loser() == $this) {
+                $gamesLost[] = $game;
+            }
+        }
+        return $gamesLost;
     }
 }

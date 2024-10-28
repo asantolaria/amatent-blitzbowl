@@ -1,6 +1,6 @@
 <!-- resources/views/tabs/teams.blade.php -->
 <div class="table-responsive mt-3">
-    <table class="table table-bordered" id="dataTableTeams" width="100%" cellspacing="0">
+    <table class="table table-striped" id="dataTableTeams" width="100%" cellspacing="0">
         <thead>
             <tr>
                 <th>Entrenador</th>

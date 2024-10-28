@@ -17,7 +17,7 @@ class RedirectIfDisabled
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->enabled === 0) {
+        if (Auth::check() && Auth::user()->enabled == false) {
             // borrar sesión
             Auth::logout();
             // redirigir a login con mensaje de error

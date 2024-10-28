@@ -26,7 +26,24 @@
     <li><strong>Liga:</strong> <a href="{{ route('leagues.show', $matchday->league->id) }}">{{ $matchday->league->name }}</a></li>
 </ul>
 
+<!-- boton para ir a jornada anterior -->
+@if ($matchday->previous())
+<a href="{{ route('matchdays.show', $matchday->previous()->id) }}" class="btn btn-sm btn-primary">
+    <i class="fas fa-arrow-left"></i>
+    Jornada Anterior</a>
+@endif
+
+<!-- boton para ir a siguiente jornada -->
+@if ($matchday->next())
+<a href="{{ route('matchdays.show', $matchday->next()->id) }}" class="btn btn-sm btn-primary">
+    Siguiente Jornada
+    <i class="fas fa-arrow-right"></i>
+</a>
+@endif
+
 <!-- Lista de Partidos -->
+<br><br>
+
 <h3>Partidos</h3>
 
 <table class="table table-striped">

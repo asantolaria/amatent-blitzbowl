@@ -91,6 +91,14 @@
                                     <a class="small" href="{{ route('register') }}">{{ __('Crea una nueva Cuenta!') }}</a>
                                 </div>
                                 @endif
+
+
+                                <!-- volver a la página anterior -->
+                                <div class="text-center">
+                                    <br>
+                                    <br>
+                                    <button class="btn btn-secondary" onclick="window.history.back();">Volver</button>
+                                </div>
                             </div>
                         </div>
                     </div>

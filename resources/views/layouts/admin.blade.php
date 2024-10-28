@@ -67,14 +67,6 @@
                 </a>
             </li>
 
-            <!-- Nav Item - Entrenadores -->
-            <li class="nav-item {{ Nav::isRoute(['coaches.index']) }}">
-                <a class="nav-link" href="{{ route('coaches.index') }}">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>{{ __('Entrenadores') }}</span>
-                </a>
-            </li>
-
             <!-- Nav Item - Jornadas -->
             <li class="nav-item {{ Nav::isRoute(['matchdays.index']) }}">
                 <a class="nav-link" href="{{ route('matchdays.index') }}">

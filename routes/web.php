@@ -46,13 +46,13 @@ Route::resource('games', GameController::class);
 
 Auth::routes();
 
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
 
 Route::middleware('auth', 'alertas', 'user.disabled')->group(function () {
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
-    Route::get('/about', function () {
-        return view('about');
-    })->name('about');
 });
 
 
@@ -69,6 +69,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/usuarios/{usuario}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.usuarios.reset-password');
 });
 
+
+Route::get('/leagues/{league}/standings', [LeagueController::class, 'standings'])->name('standings');
+
+
 # Rutas para el Gestor de Ligas de Blitzbowl
 Route::middleware('auth')->group(function () {
     // Rutas de Liga (League)
@@ -83,7 +87,6 @@ Route::middleware('auth')->group(function () {
     // Eliminar liga
     Route::get('/leagues/{league}/delete', [LeagueController::class, 'destroy'])->name('leagues.delete');
     // Ranking de la liga
-    Route::get('/leagues/{league}/standings', [LeagueController::class, 'standings'])->name('standings');
 
 
 

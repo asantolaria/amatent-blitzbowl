@@ -9,14 +9,17 @@ use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
-
-
-    public function create()
+    public function index()
     {
-        dd("Hola");
+        $teams = Team::all();
+        $statistics = [];
+        foreach ($teams as $team) {
+            $statistics[] = $this->statistics($team);
+        }
         $leagues = League::all();
-        return view('teams.create', compact('leagues', 'coaches'));
+        return view('teams.index', compact('teams', 'leagues', 'statistics'));
     }
+
 
     public function store(Request $request)
     {
@@ -31,15 +34,16 @@ class TeamController extends Controller
             Team::create($request->all());
 
             // volver a la liga
-            return redirect()->route('leagues.show', $request->league_id)->with('success', 'Equipo creado correctamente.');
+            return redirect()->route('teams.index')->with('success', 'Equipo creado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.show', $request->league_id)->with('error', 'Error creatdo Equipo: ' . $e->getMessage());
+            return redirect()->route('teams.index')->with('error', 'Error creatdo Equipo: ' . $e->getMessage());
         }
     }
 
     public function show(Team $team)
     {
-        return view('teams.show', compact('team'));
+        $games = $team->games;
+        return view('teams.show', compact('team', 'games'));
     }
 
     public function edit(Team $team)
@@ -71,9 +75,35 @@ class TeamController extends Controller
         try {
             $team->delete();
             // redirect a la liga
-            return redirect()->route('leagues.show', $team->league_id)->with('success', 'Equipo eliminado correctamente.');
+            return redirect()->route('teams.index')->with('success', 'Equipo eliminado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.show', $team->league_id)->with('error', 'Error eliminando equipo: ' . $e->getMessage());
+            return redirect()->route('teams.index')->with('error', 'Error eliminando equipo: ' . $e->getMessage());
         }
+    }
+
+    private function statistics(Team $team)
+    {
+        $matches = $team->games;
+        $wins = $team->gamesWon();
+        $draws = $team->gamesDrawn();
+        $losses = $team->gamesLost();
+        $touchdowns = $matches->sum('touchdowns_a') + $matches->sum('touchdowns_b');
+        $cards = $matches->sum('cards_a') + $matches->sum('cards_b');
+        $injuries = $matches->sum('injuries_a') + $matches->sum('injuries_b');
+        $points = count($wins) * 4 + count($draws) * 2 + count($losses);
+
+
+        return [
+            'team' => $team,
+            'league' => $team->league,
+            'matches' => $matches->count(),
+            'wins' => count($wins),
+            'draws' => count($draws),
+            'losses' => count($losses),
+            'touchdowns' => $touchdowns,
+            'cards' => $cards,
+            'injuries' => $injuries,
+            'points' => $points,
+        ];
     }
 }
