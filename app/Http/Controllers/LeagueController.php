@@ -46,7 +46,6 @@ class LeagueController extends Controller
     public function standings(Request $request, League $league)
     {
         $ranking = $this->ranking($league);
-
         return DataTables::of($ranking)
             ->addColumn('team.coach_name', fn($row) => $row['team']->coach_name ?? 'Sin entrenador')
             ->addColumn('team.name', fn($row) => $row['team']->name)
@@ -114,6 +113,7 @@ class LeagueController extends Controller
         }
     }
 
+
     private function ranking(League $league)
     {
         $matches = $league->matchdays()->with('games')->get()->pluck('games')->flatten();
@@ -154,10 +154,10 @@ class LeagueController extends Controller
 
             return [
                 'team' => $team,
-                'matches' => $team_matches->count(),
-                'wins' => $team_wins->count(),
-                'draws' => $team_draws->count(),
-                'losses' => $team_losses->count(),
+                'matches' => count($team_matches),
+                'wins' => count($team_wins),
+                'draws' => count($team_draws),
+                'losses' => count($team_losses),
                 'touchdowns' => $team_touchdowns,
                 'cards' => $team_cards,
                 'injuries' => $team_injuries,

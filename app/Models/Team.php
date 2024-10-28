@@ -26,10 +26,10 @@ class Team extends Model
     // Partidos ganados
     public function gamesWon()
     {
-        $games = $this->games();
+        $games = $this->games()->get();
         $gamesWon = [];
         foreach ($games as $game) {
-            if ($game->winner() == $this) {
+            if ($game->winner() && $game->winner()->first()->id == $this->id) {
                 $gamesWon[] = $game;
             }
         }
@@ -39,7 +39,7 @@ class Team extends Model
     // Partidos empatados
     public function gamesDrawn()
     {
-        $games = $this->games();
+        $games = $this->games()->get();
         $gamesDrawn = [];
         foreach ($games as $game) {
             if ($game->winner() == null) {
@@ -52,10 +52,10 @@ class Team extends Model
     // Partidos perdidos
     public function gamesLost()
     {
-        $games = $this->games();
+        $games = $this->games()->get();
         $gamesLost = [];
         foreach ($games as $game) {
-            if ($game->loser() == $this) {
+            if ($game->loser() && $game->loser()->first()->id == $this->id) {
                 $gamesLost[] = $game;
             }
         }

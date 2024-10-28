@@ -46,9 +46,9 @@ class Game extends Model
     public function loser()
     {
         if ($this->score_a > $this->score_b) {
-            return $this->teamB;
+            return $this->teamB();
         } elseif ($this->score_a < $this->score_b) {
-            return $this->teamA;
+            return $this->teamA();
         } else {
             return null;
         }
