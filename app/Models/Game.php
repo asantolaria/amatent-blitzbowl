@@ -9,7 +9,8 @@ class Game extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['matchday_id', 'team_a_id', 'team_b_id', 'score_a', 'score_b'];
+    protected $fillable = ['matchday_id', 'team_a_id', 'team_b_id', 'touchdowns_a', 'touchdowns_b', 'injuries_a', 'injuries_b', 'cards_a', 'cards_b', 'score_a', 'score_b'];
+
 
     // Relación inversa: un partido pertenece a una jornada
     public function matchday()

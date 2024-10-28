@@ -89,4 +89,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/teams/{team}/update', [TeamController::class, 'update'])->name('teams.update');
     // Eliminar equipo
     Route::get('/teams/{team}/delete', [TeamController::class, 'destroy'])->name('teams.delete');
+
+    // Rutas de Jornadas (Matchday)
+    // Crear jornada
+    Route::post('/matchdays/store', [MatchdayController::class, 'store'])->name('matchdays.store');
+    // Editar jornada
+    Route::put('/matchdays/{matchday}/update', [MatchdayController::class, 'update'])->name('matchdays.update');
+    // Eliminar jornada
+    Route::get('/matchdays/{matchday}/delete', [MatchdayController::class, 'destroy'])->name('matchdays.delete');
 });

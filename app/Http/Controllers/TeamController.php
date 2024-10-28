@@ -9,11 +9,7 @@ use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
-    public function index(Request $request)
-    {
-        $teams = Team::all();
-        return view('teams.index', compact('teams'));
-    }
+
 
     public function create()
     {

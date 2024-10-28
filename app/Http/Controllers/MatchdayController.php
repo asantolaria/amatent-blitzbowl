@@ -8,58 +8,60 @@ use Illuminate\Http\Request;
 
 class MatchdayController extends Controller
 {
-    public function index()
-    {
-        $matchdays = Matchday::all();
-        return view('matchdays.index', compact('matchdays'));
-    }
 
-    public function create()
-    {
-        $leagues = League::all();
-        return view('matchdays.create', compact('leagues'));
-    }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'league_id' => 'required|exists:leagues,id',
-            'date' => 'required|date',
-            'description' => 'nullable|string',
-            'round_number' => 'nullable|integer',
-        ]);
+        try {
+            $request->validate([
+                'league_id' => 'required|exists:leagues,id',
+                'date' => 'required|date',
+                'description' => 'nullable|string',
+                'round_number' => 'nullable|integer',
+            ]);
 
-        Matchday::create($request->all());
-        return redirect()->route('matchdays.index')->with('success', 'Matchday created successfully.');
+            // volver a la liga
+            return redirect()->route('leagues.show', $request->league_id)->with('success', 'Matchday created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('leagues.show', $request->league_id)->with('error', 'Error creating matchday: ' . $e->getMessage());
+        }
     }
 
     public function show(Matchday $matchday)
     {
-        return view('matchdays.show', compact('matchday'));
+        // Equipos que están inscritos en la liga de la jornada
+        $teams = $matchday->league->teams;
+
+        return view('matchdays.show', compact('matchday', 'teams'));
     }
 
-    public function edit(Matchday $matchday)
-    {
-        $leagues = League::all();
-        return view('matchdays.edit', compact('matchday', 'leagues'));
-    }
+
 
     public function update(Request $request, Matchday $matchday)
     {
-        $request->validate([
-            'league_id' => 'required|exists:leagues,id',
-            'date' => 'required|date',
-            'description' => 'nullable|string',
-            'round_number' => 'nullable|integer',
-        ]);
+        try {
+            $request->validate([
+                'league_id' => 'required|exists:leagues,id',
+                'date' => 'required|date',
+                'description' => 'nullable|string',
+                'round_number' => 'nullable|integer',
+            ]);
 
-        $matchday->update($request->all());
-        return redirect()->route('matchdays.index')->with('success', 'Matchday updated successfully.');
+            $matchday->update($request->all());
+
+            return redirect()->route('leagues.show', $request->league_id)->with('success', 'Matchday updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('leagues.show', $request->league_id)->with('error', 'Error updating matchday: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Matchday $matchday)
     {
-        $matchday->delete();
-        return redirect()->route('matchdays.index')->with('success', 'Matchday deleted successfully.');
+        try {
+            $matchday->delete();
+            return redirect()->route('leagues.show', $matchday->league_id)->with('success', 'Matchday deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('leagues.show', $matchday->league_id)->with('error', 'Error deleting matchday: ' . $e->getMessage());
+        }
     }
 }

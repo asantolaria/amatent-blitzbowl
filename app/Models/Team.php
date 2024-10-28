@@ -9,7 +9,7 @@ class Team extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['league_id', 'coach_name', 'name', 'race', 'score', 'played', 'won', 'drawn', 'lost'];
+    protected $fillable = ['league_id', 'coach_name', 'name', 'race', 'played', 'won', 'drawn', 'lost'];
 
     // Relación inversa: un equipo pertenece a una liga
     public function league()

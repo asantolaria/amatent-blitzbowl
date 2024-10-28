@@ -32,7 +32,7 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <!-- Tab - Equipos -->
         <li class="nav-item">
-            <a class="nav-link" id="teams-tab" data-toggle="tab" href="#teams" role="tab" aria-controls="teams" aria-selected="false">
+            <a class="nav-link active" id="teams-tab" data-toggle="tab" href="#teams" role="tab" aria-controls="teams" aria-selected="true">
                 {{ __('Equipos') }}
             </a>
         </li>
@@ -41,6 +41,20 @@
         <li class="nav-item">
             <a class="nav-link" id="matchdays-tab" data-toggle="tab" href="#matchdays" role="tab" aria-controls="matchdays" aria-selected="false">
                 {{ __('Jornadas') }}
+            </a>
+        </li>
+
+        <!-- Tab - Clasificación -->
+        <li class="nav-item">
+            <a class="nav-link" id="standings-tab" data-toggle="tab" href="#standings" role="tab" aria-controls="standings" aria-selected="false">
+                {{ __('Clasificación') }}
+            </a>
+        </li>
+
+        <!-- Tab - Emparejamientos -->
+        <li class="nav-item">
+            <a class="nav-link" id="pairings-tab" data-toggle="tab" href="#pairings" role="tab" aria-controls="pairings" aria-selected="false">
+                {{ __('Emparejamientos') }}
             </a>
         </li>
     </ul>
@@ -64,7 +78,7 @@
                     <tbody>
                         @foreach($league->teams as $team)
                         <tr>
-                            <td>{{ $team->coach->name ?? 'Sin entrenador' }}</td>
+                            <td>{{ $team->coach_name ?? 'Sin entrenador' }}</td>
                             <td>
                                 <a href="{{ route('teams.show', ['team' => $team->id]) }}">{{ $team->name }}</a>
                             </td>
@@ -126,7 +140,7 @@
                 <table class="table table-bordered" id="dataTableMatchdays" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Jornada</th>
+                            <th>Descripción</th>
                             <th>Fecha</th>
                             @if(Auth::user() && Auth::user()->admin)
                             <th>Acciones</th>
@@ -137,10 +151,18 @@
                         @foreach($league->matchdays as $matchday)
                         <tr>
                             <td>
-                                <a href="{{ route('matchdays.show', ['matchday' => $matchday->id]) }}">{{ $matchday->round_number }}</a>
+                                <a href="{{ route('matchdays.show', ['matchday' => $matchday->id]) }}">{{$matchday->description}}</a>
                             </td>
                             <td>{{ $matchday->date }}</td>
-                            <td>
+                            @if (Auth::user() && Auth::user()->admin)
+                            <td class="d-flex">
+
+                                <!-- edit buttton showing modal -->
+                                <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#editMatchdayModal{{ $matchday->id }}" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+
+                                <!-- Delete form -->
                                 <form action="{{ route('matchdays.destroy', ['matchday' => $matchday->id]) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
@@ -149,6 +171,7 @@
                                     </button>
                                 </form>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
 
@@ -161,10 +184,11 @@
                                 @csrf
                                 <td>
                                     <input type="hidden" name="league_id" value="{{ $league->id }}">
-                                    <input type="number" name="round_number" class="form-control" placeholder="Número de la jornada">
+
+                                    <input type="text" name="description" class="form-control" placeholder="Descripción" required>
                                 </td>
                                 <td>
-                                    <input type="date" name="date" class="form-control" placeholder="Fecha">
+                                    <input type="date" name="date" class="form-control" placeholder="Fecha" required>
                                 </td>
                                 <td>
                                     <button type="submit" class="btn btn-primary btn-sm">
@@ -178,11 +202,68 @@
                 </table>
             </div>
         </div>
+
+        <!-- Tab - Clasificación -->
+        <div class="tab-pane fade" id="standings" role="tabpanel" aria-labelledby="standings-tab">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTableStandings" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Equipo</th>
+                            <th>PJ</th>
+                            <th>PG</th>
+                            <th>PE</th>
+                            <th>PP</th>
+                            <th>GF</th>
+                            <th>GC</th>
+                            <th>DG</th>
+                            <th>Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($league->teams as $team)
+                        <tr>
+                            <td>{{ $team->name }}</td>
+                            <td>{{ $team->played }}</td>
+                            <td>{{ $team->won }}</td>
+                            <td>{{ $team->drawn }}</td>
+                            <td>{{ $team->lost }}</td>
+                            <td>{{ $team->goals_for }}</td>
+                            <td>{{ $team->goals_against }}</td>
+                            <td>{{ $team->goal_difference }}</td>
+                            <td>{{ $team->points }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab - Emparejamientos -->
+        <div class="tab-pane fade" id="pairings" role="tabpanel" aria-labelledby="pairings-tab">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTablePairings" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Jornada</th>
+                            <th>Local</th>
+                            <th>Visitante</th>
+                            <th>Resultado</th>
+                            @if(Auth::user() && Auth::user()->admin)
+                            <th>Acciones</th>
+                            @endif
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 
 <!-- Modals to edit team -->
+@if(Auth::user() && Auth::user()->admin)
 @foreach($league->teams as $team)
 <div class="modal fade" id="editTeamModal{{ $team->id }}" tabindex="-1" role="dialog" aria-labelledby="editTeamModal{{ $team->id }}Label" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -207,5 +288,38 @@
     </div>
 </div>
 @endforeach
+@endif
+
+<!-- Modals to edit matchday -->
+@if(Auth::user() && Auth::user()->admin)
+@foreach($league->matchdays as $matchday)
+<div class="modal fade" id="editMatchdayModal{{ $matchday->id }}" tabindex="-1" role="dialog" aria-labelledby="editMatchdayModal{{ $matchday->id }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('matchdays.update', ['matchday' => $matchday->id]) }}" method="post">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMatchdayModal{{ $matchday->id }}Label">Editar Jornada</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body form-group">
+                    <input type="hidden" name="league_id" value="{{ $league->id }}">
+                    <label for="description">Descripción</label>
+                    <input type="text" name="description" value="{{ $matchday->description }}" class="form-control" required>
+                    <label for="date">Fecha</label>
+                    <input type="date" name="date" value="{{ $matchday->date }}" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+@endif
 
 @endsection

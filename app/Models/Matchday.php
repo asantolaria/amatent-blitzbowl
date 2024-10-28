@@ -16,4 +16,9 @@ class Matchday extends Model
     {
         return $this->belongsTo(League::class);
     }
+
+    public function games()
+    {
+        return $this->hasMany(Game::class);
+    }
 }
