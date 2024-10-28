@@ -191,6 +191,7 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     @yield('main-content')
+                    @stack('scripts')
                 </div>
                 <!-- /.container-fluid -->
             </div>
@@ -242,6 +243,11 @@
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
 </body>
 
 </html>

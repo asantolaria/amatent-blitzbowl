@@ -22,6 +22,7 @@ use App\Http\Controllers\GameController;
 |
 */
 
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -81,6 +82,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/leagues/{league}/update', [LeagueController::class, 'update'])->name('leagues.update');
     // Eliminar liga
     Route::get('/leagues/{league}/delete', [LeagueController::class, 'destroy'])->name('leagues.delete');
+    // Ranking de la liga
+    Route::get('/leagues/{league}/standings', [LeagueController::class, 'standings'])->name('standings');
+
+
 
     // Rutas de Equipos (Team)
     // Crear equipo

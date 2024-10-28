@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Coach;
 use App\Models\League;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class LeagueController extends Controller
 {
@@ -39,6 +41,24 @@ class LeagueController extends Controller
     {
         $ranking = $this->ranking($league);
         return view('leagues.show', compact('league', 'ranking'));
+    }
+
+    public function standings(Request $request, League $league)
+    {
+        $ranking = $this->ranking($league);
+
+        return DataTables::of($ranking)
+            ->addColumn('team.coach_name', fn($row) => $row['team']->coach_name ?? 'Sin entrenador')
+            ->addColumn('team.name', fn($row) => $row['team']->name)
+            ->addColumn('matches', fn($row) => $row['matches'])
+            ->addColumn('wins', fn($row) => $row['wins'])
+            ->addColumn('draws', fn($row) => $row['draws'])
+            ->addColumn('losses', fn($row) => $row['losses'])
+            ->addColumn('points', fn($row) => $row['points'])
+            ->addColumn('touchdowns', fn($row) => $row['touchdowns'])
+            ->addColumn('cards', fn($row) => $row['cards'])
+            ->addColumn('injuries', fn($row) => $row['injuries'])
+            ->make(true);
     }
 
     public function edit(League $league)
@@ -96,13 +116,9 @@ class LeagueController extends Controller
 
     public function ranking(League $league)
     {
-        // Recoger todos los partidos jugados de las jornadas de la liga
         $matches = $league->matchdays()->with('games')->get()->pluck('games')->flatten();
-
-        // Recoger todos los equipos de la liga
         $teams = $league->teams;
 
-        // Crear un objeto con los equipos, partidos jugados, partidos ganados, partidos empatados, partidos perdidos, touchdowns, cartas, lesiones y puntuaciones
         $ranking = $teams->map(function ($team) use ($matches) {
             $team_matches = $matches->filter(function ($match) use ($team) {
                 return $match->team_a_id == $team->id || $match->team_b_id == $team->id;
@@ -110,46 +126,31 @@ class LeagueController extends Controller
 
             $team_wins = $team_matches->filter(function ($match) use ($team) {
                 $winner = $match->winner();
-                if ($winner) {
-                    return $winner->first()->id == $team->id;
-                }
+                return $winner && $winner->first()->id == $team->id;
             });
 
-
-            $team_draws = $team_matches->filter(function ($match) use ($team) {
-                $winner = $match->winner();
-                $loser = $match->loser();
-                if ($winner == null && $loser == null) {
-                    return true;
-                }
+            $team_draws = $team_matches->filter(function ($match) {
+                return $match->winner() === null && $match->loser() === null;
             });
-
 
             $team_losses = $team_matches->filter(function ($match) use ($team) {
                 $loser = $match->loser();
-                if ($loser) {
-                    return $loser->first()->id == $team->id;
-                }
+                return $loser && $loser->first()->id == $team->id;
             });
 
-            $team_touchdowns = 0;
-            $team_cards = 0;
-            $team_injuries = 0;
-            foreach ($team_matches as $match) {
-                if ($match->team_a_id == $team->id) {
-                    $team_touchdowns += $match->touchdowns_a;
-                    $team_cards += $match->cards_a;
-                    $team_injuries += $match->injuries_a;
-                }
+            $team_touchdowns = $team_matches->sum(function ($match) use ($team) {
+                return $match->team_a_id == $team->id ? $match->touchdowns_a : ($match->team_b_id == $team->id ? $match->touchdowns_b : 0);
+            });
 
-                if ($match->team_b_id == $team->id) {
-                    $team_touchdowns += $match->touchdowns_b;
-                    $team_cards += $match->cards_b;
-                    $team_injuries += $match->injuries_b;
-                }
-            }
+            $team_cards = $team_matches->sum(function ($match) use ($team) {
+                return $match->team_a_id == $team->id ? $match->cards_a : ($match->team_b_id == $team->id ? $match->cards_b : 0);
+            });
 
-            $team_points = $team_wins->count() * 4 + $team_draws->count() * 2 + $team_losses->count();
+            $team_injuries = $team_matches->sum(function ($match) use ($team) {
+                return $match->team_a_id == $team->id ? $match->injuries_a : ($match->team_b_id == $team->id ? $match->injuries_b : 0);
+            });
+
+            $team_points = $team_wins->count() * 4 + $team_draws->count() * 2;
 
             return [
                 'team' => $team,
@@ -162,10 +163,7 @@ class LeagueController extends Controller
                 'injuries' => $team_injuries,
                 'points' => $team_points,
             ];
-        });
-
-        // Ordenar el ranking por puntos
-        $ranking = $ranking->sortByDesc('points');
+        })->sortByDesc('points')->values();
 
         return $ranking;
     }
