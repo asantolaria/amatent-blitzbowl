@@ -209,29 +209,31 @@
                 <table class="table table-bordered" id="dataTableStandings" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Entrenador</th>
                             <th>Equipo</th>
-                            <th>PJ</th>
-                            <th>PG</th>
-                            <th>PE</th>
-                            <th>PP</th>
-                            <th>GF</th>
-                            <th>GC</th>
-                            <th>DG</th>
-                            <th>Puntos</th>
+                            <th title="Partidos Jugados">PJ</th>
+                            <th title="Partidos Ganados">PG</th>
+                            <th title="Partidos Empatados">PE</th>
+                            <th title="Partidos Perdidos">PP</th>
+                            <th title="Puntos">PTS</th>
+                            <th title="Touchdowns Anotados">Touchdowns</th>
+                            <th title="Cartas Obtenidas">Cartas</th>
+                            <th title="Lesiones Provocadas">Lesiones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($league->teams as $team)
+                        @foreach($ranking as $team)
                         <tr>
-                            <td>{{ $team->name }}</td>
-                            <td>{{ $team->played }}</td>
-                            <td>{{ $team->won }}</td>
-                            <td>{{ $team->drawn }}</td>
-                            <td>{{ $team->lost }}</td>
-                            <td>{{ $team->goals_for }}</td>
-                            <td>{{ $team->goals_against }}</td>
-                            <td>{{ $team->goal_difference }}</td>
-                            <td>{{ $team->points }}</td>
+                            <td>{{ $team['team']->coach_name ?? 'Sin entrenador' }}</td>
+                            <td>{{ $team['team']->name }}</td>
+                            <td>{{ $team['matches'] }}</td>
+                            <td>{{ $team['wins'] }}</td>
+                            <td>{{ $team['draws'] }}</td>
+                            <td>{{ $team['losses'] }}</td>
+                            <td>{{ $team['points'] }}</td>
+                            <td>{{ $team['touchdowns'] }}</td>
+                            <td>{{ $team['cards'] }}</td>
+                            <td>{{ $team['injuries'] }}</td>
                         </tr>
                         @endforeach
                     </tbody>

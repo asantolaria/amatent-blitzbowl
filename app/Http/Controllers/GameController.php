@@ -11,11 +11,10 @@ class GameController extends Controller
 {
 
 
-    public function store(Request $request)
+    public function store(Request $request, Matchday $matchday)
     {
         try {
             $request->validate([
-                'matchday_id' => 'required|exists:matchdays,id',
                 'team_a_id' => 'required|exists:teams,id|different:team_b_id',
                 'team_b_id' => 'required|exists:teams,id|different:team_a_id',
                 'touchdowns_a' => 'required|integer|min:0',
@@ -27,21 +26,24 @@ class GameController extends Controller
                 'score_a' => 'required|integer|min:0',
                 'score_b' => 'required|integer|min:0',
             ]);
+
+            // add matchday_id
+            $request->merge(['matchday_id' => $matchday->id]);
 
             Game::create($request->all());
 
+
             // volver a la jornada
-            return redirect()->route('matchdays.show', $request->matchday_id)->with('success', 'Game created successfully.');
+            return redirect()->route('matchdays.show', $matchday->id)->with('success', 'Partido creado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('matchdays.show', $request->matchday_id)->with('error', 'Error creating game: ' . $e->getMessage());
+            return redirect()->route('matchdays.show', $matchday->id)->with('error', 'Error creando el Partido: ' . $e->getMessage());
         }
     }
 
-    public function update(Request $request, Game $game)
+    public function update(Request $request, Matchday $matchday, Game $game)
     {
         try {
             $request->validate([
-                'matchday_id' => 'required|exists:matchdays,id',
                 'team_a_id' => 'required|exists:teams,id|different:team_b_id',
                 'team_b_id' => 'required|exists:teams,id|different:team_a_id',
                 'touchdowns_a' => 'required|integer|min:0',
@@ -53,13 +55,18 @@ class GameController extends Controller
                 'score_a' => 'required|integer|min:0',
                 'score_b' => 'required|integer|min:0',
             ]);
+
+            // check if the game belongs to the matchday
+            if ($game->matchday_id != $matchday->id) {
+                return redirect()->route('matchdays.show', $matchday->id)->with('error', 'Error actualizando partido: El partido no pertenece a la jornada.');
+            }
 
             $game->update($request->all());
 
             // volver a la jornada
-            return redirect()->route('matchdays.show', $request->matchday_id)->with('success', 'Game updated successfully.');
+            return redirect()->route('matchdays.show', $request->matchday_id)->with('success', 'Partido actualizado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('matchdays.show', $request->matchday_id)->with('error', 'Error updating game: ' . $e->getMessage());
+            return redirect()->route('matchdays.show', $request->matchday_id)->with('error', 'Error actualizando el Partido: ' . $e->getMessage());
         }
     }
 
@@ -69,9 +76,9 @@ class GameController extends Controller
 
             $game->delete();
             // redirect a la jornada
-            return redirect()->route('matchdays.show', $game->matchday_id)->with('success', 'Game deleted successfully.');
+            return redirect()->route('matchdays.show', $game->matchday_id)->with('success', 'Partido eliminado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('matchdays.show', $game->matchday_id)->with('error', 'Error deleting game: ' . $e->getMessage());
+            return redirect()->route('matchdays.show', $game->matchday_id)->with('error', 'Error borrando el partido: ' . $e->getMessage());
         }
     }
 }

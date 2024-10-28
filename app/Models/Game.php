@@ -29,4 +29,28 @@ class Game extends Model
     {
         return $this->belongsTo(Team::class, 'team_b_id');
     }
+
+    // Winner
+    public function winner()
+    {
+        if ($this->score_a > $this->score_b) {
+            return $this->teamA();
+        } elseif ($this->score_a < $this->score_b) {
+            return $this->teamB();
+        } else {
+            return null;
+        }
+    }
+
+    // Loser
+    public function loser()
+    {
+        if ($this->score_a > $this->score_b) {
+            return $this->teamB;
+        } elseif ($this->score_a < $this->score_b) {
+            return $this->teamA;
+        } else {
+            return null;
+        }
+    }
 }

@@ -26,13 +26,12 @@
     <li><strong>Liga:</strong> <a href="{{ route('leagues.show', $matchday->league->id) }}">{{ $matchday->league->name }}</a></li>
 </ul>
 
-<!-- lista de partidos -->
+<!-- Lista de Partidos -->
 <h3>Partidos</h3>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">Fecha</th>
             <th scope="col">Equipo Local</th>
             <th scope="col">Equipo Visitante</th>
             <th scope="col">Touchdowns Local</th>
@@ -51,25 +50,43 @@
     <tbody>
         @foreach ($matchday->games as $match)
         <tr>
-            <td>{{ $match->date }}</td>
-            <td>{{ $match->localTeam->name }}</td>
-            <td>{{ $match->visitorTeam->name }}</td>
-            <td>{{ $match->local_touchdowns }}</td>
-            <td>{{ $match->visitor_touchdowns }}</td>
-            <td>{{ $match->local_injuries }}</td>
-            <td>{{ $match->visitor_injuries }}</td>
-            <td>{{ $match->local_cards }}</td>
-            <td>{{ $match->visitor_cards }}</td>
-            <td>{{ $match->local_score }}</td>
-            <td>{{ $match->visitor_score }}</td>
+            <td>
+                <!-- Verificar si el equipo local es el ganador o el perdedor -->
+                @if($match->winner() == null && $match->loser() == null)
+                <h4><span class="badge badge-warning">{{ $match->teamA->name }}</span></h4>
+                @elseif($match->winner()->first() && $match->winner()->first()->id == $match->team_a_id)
+                <h4><span class="badge badge-success">{{ $match->teamA->name }}</span></h4>
+                @elseif($match->loser() && $match->loser()->id == $match->team_a_id)
+                <h4><span class="badge badge-danger">{{ $match->teamA->name }}</span></h4>
+                @endif
+            </td>
+            <td>
+                <!-- Verificar si el equipo visitante es el ganador o el perdedor -->
+                @if($match->winner() == null && $match->loser() == null)
+                <h4><span class="badge badge-warning">{{ $match->teamB->name }}</span></h4>
+                @elseif($match->winner()->first() && $match->winner()->first()->id == $match->team_b_id)
+                <h4><span class="badge badge-success">{{ $match->teamB->name }}</span></h4>
+                @elseif($match->loser() && $match->loser()->id == $match->team_b_id)
+                <h4><span class="badge badge-danger">{{ $match->teamB->name }}</span></h4>
+                @endif
+            </td>
+            <td>{{ $match->touchdowns_a }}</td>
+            <td>{{ $match->touchdowns_b }}</td>
+            <td>{{ $match->injuries_a }}</td>
+            <td>{{ $match->injuries_b }}</td>
+            <td>{{ $match->cards_a }}</td>
+            <td>{{ $match->cards_b }}</td>
+            <td>{{ $match->score_a }}</td>
+            <td>{{ $match->score_b }}</td>
             @if(Auth::user() && Auth::user()->admin)
             <td>
-                <!-- botón editar partido que muestra un modal con el formulario de editar partido -->
+                <!-- Botón Editar Partido -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editGameModal{{ $match->id }}">
                     <i class="fas fa-edit"></i>
                 </button>
 
-                <form action="{{ route('games.destroy', $match->id) }}" method="POST" style="display: inline;">
+                <!-- Formulario Eliminar Partido -->
+                <form action="{{ route('games.destroy', ['matchday' => $matchday->id, 'game' => $match->id]) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
@@ -84,18 +101,17 @@
 </table>
 
 @if(Auth::user() && Auth::user()->admin)
-<!-- boton añadir partido que muestra un modal con el formulario de añadir partido -->
+<!-- Botón Añadir Partido -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGameModal">
     Añadir Partido
 </button>
 @endif
 
-
 <!-- Modal Crear Partido -->
 <div class="modal fade" id="addGameModal" tabindex="-1" role="dialog" aria-labelledby="addGameModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('games.store') }}" method="POST">
+            <form action="{{ route('games.store', $matchday->id) }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="addGameModalLabel">Añadir Partido</h5>
@@ -104,39 +120,33 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Fecha del Partido -->
-                    <div class="form-group">
-                        <label for="date">Fecha</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
-                    </div>
-
                     <div class="row">
                         <!-- Campos del Equipo Local -->
                         <div class="col-6">
                             <h5>Equipo Local</h5>
                             <div class="form-group">
-                                <label for="local_team">Equipo Local</label>
-                                <select class="form-control" id="local_team" name="local_team" required>
+                                <label for="team_a_id">Equipo Local</label>
+                                <select class="form-control" id="team_a_id" name="team_a_id" required>
                                     @foreach ($teams as $team)
                                     <option value="{{ $team->id }}">{{ $team->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="local_touchdowns">Touchdowns Local</label>
-                                <input type="number" class="form-control" id="local_touchdowns" name="local_touchdowns" required>
+                                <label for="touchdowns_a">Touchdowns Local</label>
+                                <input type="number" class="form-control" id="touchdowns_a" name="touchdowns_a" required>
                             </div>
                             <div class="form-group">
-                                <label for="local_injuries">Lesiones Local</label>
-                                <input type="number" class="form-control" id="local_injuries" name="local_injuries" required>
+                                <label for="injuries_a">Lesiones Local</label>
+                                <input type="number" class="form-control" id="injuries_a" name="injuries_a" required>
                             </div>
                             <div class="form-group">
-                                <label for="local_cards">Cartas Local</label>
-                                <input type="number" class="form-control" id="local_cards" name="local_cards" required>
+                                <label for="cards_a">Cartas Local</label>
+                                <input type="number" class="form-control" id="cards_a" name="cards_a" required>
                             </div>
                             <div class="form-group">
-                                <label for="local_score">Puntuación Local</label>
-                                <input type="number" class="form-control" id="local_score" name="local_score" required>
+                                <label for="score_a">Puntuación Local</label>
+                                <input type="number" class="form-control" id="score_a" name="score_a" required>
                             </div>
                         </div>
 
@@ -144,28 +154,28 @@
                         <div class="col-6">
                             <h5>Equipo Visitante</h5>
                             <div class="form-group">
-                                <label for="visitor_team">Equipo Visitante</label>
-                                <select class="form-control" id="visitor_team" name="visitor_team" required>
+                                <label for="team_b_id">Equipo Visitante</label>
+                                <select class="form-control" id="team_b_id" name="team_b_id" required>
                                     @foreach ($teams as $team)
                                     <option value="{{ $team->id }}">{{ $team->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_touchdowns">Touchdowns Visitante</label>
-                                <input type="number" class="form-control" id="visitor_touchdowns" name="visitor_touchdowns" required>
+                                <label for="touchdowns_b">Touchdowns Visitante</label>
+                                <input type="number" class="form-control" id="touchdowns_b" name="touchdowns_b" required>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_injuries">Lesiones Visitante</label>
-                                <input type="number" class="form-control" id="visitor_injuries" name="visitor_injuries" required>
+                                <label for="injuries_b">Lesiones Visitante</label>
+                                <input type="number" class="form-control" id="injuries_b" name="injuries_b" required>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_cards">Cartas Visitante</label>
-                                <input type="number" class="form-control" id="visitor_cards" name="visitor_cards" required>
+                                <label for="cards_b">Cartas Visitante</label>
+                                <input type="number" class="form-control" id="cards_b" name="cards_b" required>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_score">Puntuación Visitante</label>
-                                <input type="number" class="form-control" id="visitor_score" name="visitor_score" required>
+                                <label for="score_b">Puntuación Visitante</label>
+                                <input type="number" class="form-control" id="score_b" name="score_b" required>
                             </div>
                         </div>
                     </div>
@@ -186,7 +196,7 @@
 <div class="modal fade" id="editGameModal{{ $match->id }}" tabindex="-1" role="dialog" aria-labelledby="editGameModalLabel{{ $match->id }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('games.update', $match->id) }}" method="POST">
+            <form action="{{ route('games.update', ['matchday' => $matchday->id, 'game' => $match->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="modal-header">
@@ -196,39 +206,34 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Fecha del Partido -->
-                    <div class="form-group">
-                        <label for="date">Fecha</label>
-                        <input type="date" class="form-control" id="date" name="date" value="{{ $match->date }}" required>
-                    </div>
 
                     <div class="row">
                         <!-- Campos del Equipo Local -->
                         <div class="col-6">
                             <h5>Equipo Local</h5>
                             <div class="form-group">
-                                <label for="local_team">Equipo Local</label>
-                                <select class="form-control" id="local_team" name="local_team" required>
+                                <label for="team_a_id">Equipo Local</label>
+                                <select class="form-control" id="team_a_id" name="team_a_id" required>
                                     @foreach ($teams as $team)
-                                    <option value="{{ $team->id }}" @if($team->id == $match->local_team_id) selected @endif>{{ $team->name }}</option>
+                                    <option value="{{ $team->id }}" @if($team->id == $match->team_a_id) selected @endif>{{ $team->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="local_touchdowns">Touchdowns Local</label>
-                                <input type="number" class="form-control" id="local_touchdowns" name="local_touchdowns" value="{{ $match->local_touchdowns }}" required>
+                                <label for="touchdowns_a">Touchdowns Local</label>
+                                <input type="number" class="form-control" id="touchdowns_a" name="touchdowns_a" value="{{ $match->touchdowns_a }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="local_injuries">Lesiones Local</label>
-                                <input type="number" class="form-control" id="local_injuries" name="local_injuries" value="{{ $match->local_injuries }}" required>
+                                <label for="injuries_a">Lesiones Local</label>
+                                <input type="number" class="form-control" id="injuries_a" name="injuries_a" value="{{ $match->injuries_a }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="local_cards">Cartas Local</label>
-                                <input type="number" class="form-control" id="local_cards" name="local_cards" value="{{ $match->local_cards }}" required>
+                                <label for="cards_a">Cartas Local</label>
+                                <input type="number" class="form-control" id="cards_a" name="cards_a" value="{{ $match->cards_a }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="local_score">Puntuación Local</label>
-                                <input type="number" class="form-control" id="local_score" name="local_score" value="{{ $match->local_score }}" required>
+                                <label for="score_a">Puntuación Local</label>
+                                <input type="number" class="form-control" id="score_a" name="score_a" value="{{ $match->score_a }}" required>
                             </div>
                         </div>
 
@@ -236,28 +241,28 @@
                         <div class="col-6">
                             <h5>Equipo Visitante</h5>
                             <div class="form-group">
-                                <label for="visitor_team">Equipo Visitante</label>
-                                <select class="form-control" id="visitor_team" name="visitor_team" required>
+                                <label for="team_b_id">Equipo Visitante</label>
+                                <select class="form-control" id="team_b_id" name="team_b_id" required>
                                     @foreach ($teams as $team)
-                                    <option value="{{ $team->id }}" @if($team->id == $match->visitor_team_id) selected @endif>{{ $team->name }}</option>
+                                    <option value="{{ $team->id }}" @if($team->id == $match->team_b_id) selected @endif>{{ $team->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_touchdowns">Touchdowns Visitante</label>
-                                <input type="number" class="form-control" id="visitor_touchdowns" name="visitor_touchdowns" value="{{ $match->visitor_touchdowns }}" required>
+                                <label for="touchdowns_b">Touchdowns Visitante</label>
+                                <input type="number" class="form-control" id="touchdowns_b" name="touchdowns_b" value="{{ $match->touchdowns_b }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_injuries">Lesiones Visitante</label>
-                                <input type="number" class="form-control" id="visitor_injuries" name="visitor_injuries" value="{{ $match->visitor_injuries }}" required>
+                                <label for="injuries_b">Lesiones Visitante</label>
+                                <input type="number" class="form-control" id="injuries_b" name="injuries_b" value="{{ $match->injuries_b }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_cards">Cartas Visitante</label>
-                                <input type="number" class="form-control" id="visitor_cards" name="visitor_cards" value="{{ $match->visitor_cards }}" required>
+                                <label for="cards_b">Cartas Visitante</label>
+                                <input type="number" class="form-control" id="cards_b" name="cards_b" value="{{ $match->cards_b }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="visitor_score">Puntuación Visitante</label>
-                                <input type="number" class="form-control" id="visitor_score" name="visitor_score" value="{{ $match->visitor_score }}" required>
+                                <label for="score_a">Puntuación Visitante</label>
+                                <input type="number" class="form-control" id="score_a" name="score_a" value="{{ $match->score_a }}" required>
                             </div>
                         </div>
                     </div>

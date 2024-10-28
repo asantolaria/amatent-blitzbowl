@@ -20,6 +20,8 @@ class MatchdayController extends Controller
                 'round_number' => 'nullable|integer',
             ]);
 
+            Matchday::create($request->all());
+
             // volver a la liga
             return redirect()->route('leagues.show', $request->league_id)->with('success', 'Matchday created successfully.');
         } catch (\Exception $e) {

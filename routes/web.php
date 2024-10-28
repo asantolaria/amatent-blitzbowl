@@ -100,9 +100,9 @@ Route::middleware('auth')->group(function () {
 
     // Rutas de Partidos (Game)
     // Crear partido
-    Route::post('/games/store', [GameController::class, 'store'])->name('games.store');
+    Route::post('/matchdays/{matchday}/games/store', [GameController::class, 'store'])->name('games.store');
     // Editar partido
-    Route::put('/games/{game}/update', [GameController::class, 'update'])->name('games.update');
+    Route::put('/matchdays/{matchday}/games/{game}/update', [GameController::class, 'update'])->name('games.update');
     // Eliminar partido
-    Route::get('/games/{game}/delete', [GameController::class, 'destroy'])->name('games.delete');
+    Route::get('/matchdays/{matchday}/games/{game}/delete', [GameController::class, 'destroy'])->name('games.delete');
 });

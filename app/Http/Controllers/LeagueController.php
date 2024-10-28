@@ -37,8 +37,8 @@ class LeagueController extends Controller
 
     public function show(League $league)
     {
-
-        return view('leagues.show', compact('league'));
+        $ranking = $this->ranking($league);
+        return view('leagues.show', compact('league', 'ranking'));
     }
 
     public function edit(League $league)
@@ -92,5 +92,81 @@ class LeagueController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('leagues.index')->with('error', 'Error disabling league: ' . $e->getMessage());
         }
+    }
+
+    public function ranking(League $league)
+    {
+        // Recoger todos los partidos jugados de las jornadas de la liga
+        $matches = $league->matchdays()->with('games')->get()->pluck('games')->flatten();
+
+        // Recoger todos los equipos de la liga
+        $teams = $league->teams;
+
+        // Crear un objeto con los equipos, partidos jugados, partidos ganados, partidos empatados, partidos perdidos, touchdowns, cartas, lesiones y puntuaciones
+        $ranking = $teams->map(function ($team) use ($matches) {
+            $team_matches = $matches->filter(function ($match) use ($team) {
+                return $match->team_a_id == $team->id || $match->team_b_id == $team->id;
+            });
+
+            $team_wins = $team_matches->filter(function ($match) use ($team) {
+                $winner = $match->winner();
+                if ($winner) {
+                    return $winner->first()->id == $team->id;
+                }
+            });
+
+
+            $team_draws = $team_matches->filter(function ($match) use ($team) {
+                $winner = $match->winner();
+                $loser = $match->loser();
+                if ($winner == null && $loser == null) {
+                    return true;
+                }
+            });
+
+
+            $team_losses = $team_matches->filter(function ($match) use ($team) {
+                $loser = $match->loser();
+                if ($loser) {
+                    return $loser->first()->id == $team->id;
+                }
+            });
+
+            $team_touchdowns = 0;
+            $team_cards = 0;
+            $team_injuries = 0;
+            foreach ($team_matches as $match) {
+                if ($match->team_a_id == $team->id) {
+                    $team_touchdowns += $match->touchdowns_a;
+                    $team_cards += $match->cards_a;
+                    $team_injuries += $match->injuries_a;
+                }
+
+                if ($match->team_b_id == $team->id) {
+                    $team_touchdowns += $match->touchdowns_b;
+                    $team_cards += $match->cards_b;
+                    $team_injuries += $match->injuries_b;
+                }
+            }
+
+            $team_points = $team_wins->count() * 4 + $team_draws->count() * 2 + $team_losses->count();
+
+            return [
+                'team' => $team,
+                'matches' => $team_matches->count(),
+                'wins' => $team_wins->count(),
+                'draws' => $team_draws->count(),
+                'losses' => $team_losses->count(),
+                'touchdowns' => $team_touchdowns,
+                'cards' => $team_cards,
+                'injuries' => $team_injuries,
+                'points' => $team_points,
+            ];
+        });
+
+        // Ordenar el ranking por puntos
+        $ranking = $ranking->sortByDesc('points');
+
+        return $ranking;
     }
 }
