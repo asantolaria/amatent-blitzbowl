@@ -22,7 +22,7 @@
     <link href="{{ asset('css/blitzbowl.css') }}" rel="stylesheet">
 
     <!-- Favicon -->
-    <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+    <link href="{{ asset('img/favicon.ico') }}" rel="icon" type="image/png">
 </head>
 
 <body id="page-top">
