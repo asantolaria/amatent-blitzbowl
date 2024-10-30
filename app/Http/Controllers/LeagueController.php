@@ -171,29 +171,56 @@ class LeagueController extends Controller
 
     private function pairingMatrix($league)
     {
-        $teams = $league->teams;
+        // Ordenar los equipos alfabéticamente por el nombre del entrenador (coach_name)
+        $teams = $league->teams->sortBy('coach_name');
         $matches = $league->matchdays()->with('games')->get()->pluck('games')->flatten();
 
         $matrix = [];
 
+        // Generar la matriz de enfrentamientos
         foreach ($teams as $teamA) {
+            $rowTotal = 0; // Variable para almacenar el total de partidos de cada equipo
+
             foreach ($teams as $teamB) {
+                $nameA = "(" . $teamA->coach_name . ") " . $teamA->name;
+                $nameB = "(" . $teamB->coach_name . ") " . $teamB->name;
+
                 if ($teamA->id !== $teamB->id) {
                     $countMatches = $matches->filter(function ($game) use ($teamA, $teamB) {
                         return ($game->team_a_id === $teamA->id && $game->team_b_id === $teamB->id) ||
                             ($game->team_a_id === $teamB->id && $game->team_b_id === $teamA->id);
                     })->count();
 
-                    $namea = $teamA->name . " (" . $teamA->coach_name . ")";
-                    $nameb = $teamB->name . " (" . $teamB->coach_name . ")";
-                    $matrix[$namea][$nameb] = $countMatches;
+                    $matrix[$nameA][$nameB] = $countMatches;
+                    $rowTotal += $countMatches;
                 } else {
-                    $namea = $teamA->name . " (" . $teamA->coach_name . ")";
-                    $nameb = $teamB->name . " (" . $teamB->coach_name . ")";
-                    $matrix[$namea][$nameb] = '-';
+                    $matrix[$nameA][$nameB] = '-';
                 }
             }
+
+            // Añadir la columna de sumatorio para el total de partidos jugados por cada equipo
+            $matrix[$nameA]['Total'] = $rowTotal;
         }
+
+        // Añadir la fila de sumatorio para el total de partidos jugados contra cada equipo
+        $columnTotals = [];
+        foreach ($teams as $teamB) {
+            $nameB = $teamB->name . " (" . $teamB->coach_name . ")";
+            $columnTotal = 0;
+
+            foreach ($teams as $teamA) {
+                $nameA = $teamA->name . " (" . $teamA->coach_name . ")";
+                if (isset($matrix[$nameA][$nameB]) && $matrix[$nameA][$nameB] !== '-') {
+                    $columnTotal += $matrix[$nameA][$nameB];
+                }
+            }
+
+            $columnTotals[$nameB] = $columnTotal;
+        }
+
+        // Añadir la fila de "Total" en la matriz
+        $matrix['Total'] = $columnTotals;
+        $matrix['Total']['Total'] = '-'; // Casilla vacía para la esquina inferior derecha
 
         return $matrix;
     }
