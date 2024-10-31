@@ -59,7 +59,6 @@
             @if (Auth::user() && Auth::user()->admin)
             <tr>
                 <!-- formulario para crear un nuevo equipo -->
-                @if(Auth::user() && Auth::user()->admin)
                 <form action="{{ route('teams.store') }}" method="post">
                     @csrf
                     <td>
@@ -76,13 +75,8 @@
                             @endforeach
                         </select>
                     </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
                     <td><button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Crear</button></td>
                 </form>
-                @endif
             </tr>
             @endif
         </tbody>
