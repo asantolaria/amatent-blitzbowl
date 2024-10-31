@@ -17,15 +17,15 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($statistics as $team)
+            @foreach ($teams as $team)
             <tr>
                 <td>
-                    <a href="{{ route('teams.show', $team['team']->id) }}">{{ $team['team']->name }}</a>
+                    <a href="{{ route('teams.show', $team->id) }}">{{ $team->name }}</a>
                 </td>
-                <td>{{ $team['team']->coach_name }}</td>
-                <td>{{ $team['team']->race }}</td>
+                <td>{{ $team->coach_name }}</td>
+                <td>{{ $team->race }}</td>
                 <td>
-                    <a href="{{ route('leagues.show', $team['league']->id) }}">{{ $team['league']->name }}</a>
+                    <a href="{{ route('leagues.show', $team->league()->first()->id) }}">{{ $team->league()->first()->name }}</a>
                 </td>
                 <!-- <td>{{ $team['matches'] }}</td>
                 <td>{{ $team['wins'] }}</td>
@@ -36,7 +36,7 @@
                 <td>{{ $team['cards'] }}</td>
                 <td>{{ $team['injuries'] }}</td> -->
                 <td class="d-flex">
-                    <a title="Detalle" href="{{ route('teams.show', $team['team']->id) }}" class="btn btn-sm btn-info mr-1">
+                    <a title="Detalle" href="{{ route('teams.show', $team->id) }}" class="btn btn-sm btn-info mr-1">
                         <i class="fa fa-eye"></i>
                     </a>
                     @if (Auth::user() && Auth::user()->admin)

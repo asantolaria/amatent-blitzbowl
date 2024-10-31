@@ -76,12 +76,12 @@
             </li>
 
             <!-- Nav Item - Partidos -->
-            <li class="nav-item {{ Nav::isRoute(['games.index']) }}">
+            <!-- <li class="nav-item {{ Nav::isRoute(['games.index']) }}">
                 <a class="nav-link" href="{{ route('games.index') }}">
                     <i class="fas fa-football-ball"></i>
                     <span>{{ __('Partidos') }}</span>
                 </a>
-            </li>
+            </li> -->
 
             @if(Auth::user() && Auth::user()->admin)
             <!-- Divider -->

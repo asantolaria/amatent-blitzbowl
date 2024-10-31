@@ -12,12 +12,7 @@ class TeamController extends Controller
     public function index()
     {
         $teams = Team::all();
-        $statistics = [];
-        foreach ($teams as $team) {
-            $statistics[] = $this->statistics($team);
-        }
-        $leagues = League::all();
-        return view('teams.index', compact('teams', 'leagues', 'statistics'));
+        return view('teams.index', compact('teams'));
     }
 
 
@@ -42,9 +37,67 @@ class TeamController extends Controller
 
     public function show(Team $team)
     {
-        $games = $team->games;
-        return view('teams.show', compact('team', 'games'));
+        // Cargar los juegos del equipo con las relaciones necesarias
+        $games = $team->games()->with(['matchday.league', 'teamA', 'teamB'])->get();
+
+        // Procesar cada juego para precalcular la información
+        $gamesData = $games->map(function ($game) use ($team) {
+            // Determinar ganador, perdedor o empate
+            $winner = $game->winner();
+            if ($winner) {
+                $winner = $winner->first();
+            }
+            $loser = $game->loser();
+            if ($loser) {
+                $loser = $loser->first();
+            }
+
+            $is_draw = is_null($winner);
+
+            $status_a = $is_draw ? 'draw' : ($winner->id == $game->team_a_id ? 'winner' : 'loser');
+            $status_b = $is_draw ? 'draw' : ($winner->id == $game->team_b_id ? 'winner' : 'loser');
+
+            // Preparar los datos de cada equipo
+            $team_a = [
+                'name' => $game->teamA->name,
+                'coach_name' => $game->teamA->coach_name,
+                'status' => $status_a
+            ];
+            $team_b = [
+                'name' => $game->teamB->name,
+                'coach_name' => $game->teamB->coach_name,
+                'status' => $status_b
+            ];
+
+            // Devolver la estructura de datos precalculada
+            return [
+                'team_a' => $team_a,
+                'team_b' => $team_b,
+                'matchday' => [
+                    'id' => $game->matchday->id,
+                    'date' => $game->matchday->date,
+                    'description' => $game->matchday->description,
+                    'league' => [
+                        'id' => $game->matchday->league->id,
+                        'name' => $game->matchday->league->name
+                    ]
+                ],
+                'touchdowns_a' => $game->touchdowns_a,
+                'touchdowns_b' => $game->touchdowns_b,
+                'injuries_a' => $game->injuries_a,
+                'injuries_b' => $game->injuries_b,
+                'cards_a' => $game->cards_a,
+                'cards_b' => $game->cards_b,
+                'score_a' => $game->score_a,
+                'score_b' => $game->score_b,
+                'id' => $game->id
+            ];
+        });
+
+        return view('teams.show', compact('team', 'gamesData'));
     }
+
+
 
     public function edit(Team $team)
     {
@@ -79,31 +132,5 @@ class TeamController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('teams.index')->with('error', 'Error eliminando equipo: ' . $e->getMessage());
         }
-    }
-
-    private function statistics(Team $team)
-    {
-        $matches = $team->games;
-        $wins = $team->gamesWon();
-        $draws = $team->gamesDrawn();
-        $losses = $team->gamesLost();
-        $touchdowns = $matches->sum('touchdowns_a') + $matches->sum('touchdowns_b');
-        $cards = $matches->sum('cards_a') + $matches->sum('cards_b');
-        $injuries = $matches->sum('injuries_a') + $matches->sum('injuries_b');
-        $points = count($wins) * 4 + count($draws) * 2 + count($losses);
-
-
-        return [
-            'team' => $team,
-            'league' => $team->league,
-            'matches' => $matches->count(),
-            'wins' => count($wins),
-            'draws' => count($draws),
-            'losses' => count($losses),
-            'touchdowns' => $touchdowns,
-            'cards' => $cards,
-            'injuries' => $injuries,
-            'points' => $points,
-        ];
     }
 }

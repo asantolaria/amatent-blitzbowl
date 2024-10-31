@@ -18,6 +18,11 @@ class Game extends Model
         return $this->belongsTo(Matchday::class);
     }
 
+    public function league()
+    {
+        return $this->matchday()->first()->league();
+    }
+
     // Relación con el equipo A
     public function teamA()
     {
