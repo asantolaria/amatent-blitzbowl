@@ -64,7 +64,7 @@ class AdminUserController extends Controller
             'name' => $request->input('name'),
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
+            'password' => $request->input('password'),
             'admin' => $request->has('admin'),
         ]);
 
