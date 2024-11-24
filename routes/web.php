@@ -97,6 +97,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/teams/{team}/update', [TeamController::class, 'update'])->name('teams.update');
     // Eliminar equipo
     Route::get('/teams/{team}/delete', [TeamController::class, 'destroy'])->name('teams.delete');
+    // Asignar CoachFeature
+    Route::post('/teams/{team}/assign-coach-feature', [TeamController::class, 'assignCoachFeature'])->name('teams.assign-coach-feature');
+    // Desasignar CoachFeature
+    Route::get('/teams/{team}/unassign-coach-feature/{coachFeature}', [TeamController::class, 'unassignCoachFeature'])->name('teams.unassign-coach-feature');
 
     // Rutas de Jornadas (Matchday)
     // Crear jornada

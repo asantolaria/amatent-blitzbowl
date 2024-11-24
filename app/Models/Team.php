@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\League;
+use App\Models\Game;
+use App\Models\CoachFeature;
 
 class Team extends Model
 {
@@ -60,5 +63,11 @@ class Team extends Model
             }
         }
         return $gamesLost;
+    }
+
+    public function coachFeatures()
+    {
+        return $this->belongsToMany(CoachFeature::class, 'coach_feature_team')
+            ->withTimestamps();
     }
 }

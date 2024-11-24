@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Models\League;
 use App\Models\Coach;
+use App\Models\CoachFeature;
 use Illuminate\Http\Request;
 
 class TeamController extends Controller
@@ -132,6 +133,29 @@ class TeamController extends Controller
             return redirect()->route('teams.index')->with('success', 'Equipo eliminado correctamente.');
         } catch (\Exception $e) {
             return redirect()->route('teams.index')->with('error', 'Error eliminando equipo: ' . $e->getMessage());
+        }
+    }
+
+    public function assignCoachFeature(Request $request, Team $team)
+    {
+        try {
+            $request->validate([
+                'coach_feature_id' => 'required|exists:coach_features,id'
+            ]);
+            $team->coachFeatures()->attach($request->coach_feature_id);
+            return redirect()->route('teams.show', $team)->with('success', 'Rasgo de Entrenador asignado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('teams.show', $team)->with('error', 'Error asignando Rasgo de Entrenador: ' . $e->getMessage());
+        }
+    }
+
+    public function unassignCoachFeature(Team $team, $coachFeature)
+    {
+        try {
+            $team->coachFeatures()->detach($coachFeature);
+            return redirect()->route('teams.show', $team)->with('success', 'Rasgo de Entrenador desasignado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('teams.show', $team)->with('error', 'Error desasignando Rasgo de Entrenador: ' . $e->getMessage());
         }
     }
 }
