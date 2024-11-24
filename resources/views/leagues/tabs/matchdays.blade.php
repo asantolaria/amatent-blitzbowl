@@ -28,7 +28,7 @@
                     <form action="{{ route('matchdays.destroy', ['matchday' => $matchday->id]) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro?')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </form>

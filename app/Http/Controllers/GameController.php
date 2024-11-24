@@ -70,15 +70,21 @@ class GameController extends Controller
         }
     }
 
-    public function destroy(Game $game)
+    public function destroy(Matchday $matchday, Game $game)
     {
         try {
 
+            // check if the game belongs to the matchday
+            if ($game->matchday_id != $matchday->id) {
+                return redirect()->route('matchdays.show', $matchday->id)->with('error', 'Error eliminando partido: El partido no pertenece a la jornada.');
+            }
+
             $game->delete();
-            // redirect a la jornada
-            return redirect()->route('matchdays.show', $game->matchday_id)->with('success', 'Partido eliminado correctamente.');
+
+            // volver a la jornada
+            return redirect()->route('matchdays.show', $matchday->id)->with('success', 'Partido eliminado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('matchdays.show', $game->matchday_id)->with('error', 'Error borrando el partido: ' . $e->getMessage());
+            return redirect()->route('matchdays.show', $matchday->id)->with('error', 'Error eliminando el partido: ' . $e->getMessage());
         }
     }
 }
