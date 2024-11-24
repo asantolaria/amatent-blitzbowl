@@ -48,29 +48,12 @@
                         <td>{{ $liga->description }}</td>
                         <td>{{ $liga->season_year }}</td>
                         <td>
-                            @if(Auth::user() && Auth::user()->admin)
 
                             <!-- Si la liga está activa, se muestra el botón de desactivar -->
-                            @if($liga->enabled)
-                            <!-- button para desactivar -->
-                            <a title="Pulsa el botón para Desactivar" class="btn btn-success btn-sm" href="{{ route('leagues.disable', ['league' => $liga->id]) }}">
-                                <!-- icono prohibido -->
-                                Activa
-                            </a>
-                            @else
-                            <!-- button para activar -->
-                            <a title="Pulsa el botón para Activar" class="btn btn-danger btn-sm" href="{{ route('leagues.enable', ['league' => $liga->id]) }}">
-                                <!-- icono prohibido -->
-                                Desactivada
-                            </a>
-                            @endif
-                            @else
-
                             @if($liga->enabled)
                             <span class="badge badge-success">Activa</span>
                             @else
                             <span class="badge badge-danger">Desactivada</span>
-                            @endif
                             @endif
 
                         </td>
@@ -84,7 +67,23 @@
                             <a title="Eliminar" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro?')" href="{{ route('leagues.delete', ['league' => $liga->id]) }}">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
+                            @if($liga->enabled)
+
+                            <!-- button para desactivar -->
+                            <a title="Pulsa el botón para Desactivar la liga" class="btn btn-danger btn-sm" href="{{ route('leagues.disable', ['league' => $liga->id]) }}">
+                                <!-- icono prohibido -->
+                                <i class="fas fa-ban"></i>
+                            </a>
+                            @else
+                            <!-- button para activar -->
+                            <a title="Pulsa el botón para Activar la liga" class="btn btn-success btn-sm" href="{{ route('leagues.enable', ['league' => $liga->id]) }}">
+                                <!-- icono prohibido -->
+                                <i class="fas fa-check"></i>
+                            </a>
+                            @endif
                         </td>
+
+
                         @endif
                     </tr>
                     @endforeach

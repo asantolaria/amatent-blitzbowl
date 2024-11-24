@@ -41,6 +41,7 @@ class AdminUserController extends Controller
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'enabled' => false,
+            'admin' => true,
         ]);
 
         return redirect()->route('admin.usuarios.index')->with('success', 'Usuario creado exitosamente.');

@@ -37,7 +37,7 @@
 
         <div class="form-group">
             <label for="admin">Administrator:</label>
-            <input type="checkbox" name="admin" id="admin" value="1">
+            <input type="checkbox" name="admin" id="admin" {{ $usuario->admin ? 'checked' : '' }}>
         </div>
 
         <button type="submit" class="btn btn-primary">Actualizar Usuario</button>

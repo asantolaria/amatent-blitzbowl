@@ -75,9 +75,9 @@ class LeagueController extends Controller
             ]);
 
             $league->update($request->all());
-            return redirect()->route('leagues.index')->with('success', 'League updated successfully.');
+            return redirect()->route('leagues.index')->with('success', 'Liga actualizada correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.index')->with('error', 'Error updating league: ' . $e->getMessage());
+            return redirect()->route('leagues.index')->with('error', 'Error actualizando la liga: ' . $e->getMessage());
         }
     }
 
@@ -85,9 +85,9 @@ class LeagueController extends Controller
     {
         try {
             $league->delete();
-            return redirect()->route('leagues.index')->with('success', 'League deleted successfully.');
+            return redirect()->route('leagues.index')->with('success', 'Liga eliminada correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.index')->with('error', 'Error deleting league: ' . $e->getMessage());
+            return redirect()->route('leagues.index')->with('error', 'Error eliminando la liga: ' . $e->getMessage());
         }
     }
 
@@ -96,9 +96,9 @@ class LeagueController extends Controller
         try {
             $league->enabled = true;
             $league->save();
-            return redirect()->route('leagues.index')->with('success', 'League enabled successfully.');
+            return redirect()->route('leagues.index')->with('success', 'Liga habilitada correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.index')->with('error', 'Error enabling league: ' . $e->getMessage());
+            return redirect()->route('leagues.index')->with('error', 'Error habilitando la liga: ' . $e->getMessage());
         }
     }
 
@@ -107,9 +107,9 @@ class LeagueController extends Controller
         try {
             $league->enabled = false;
             $league->save();
-            return redirect()->route('leagues.index')->with('success', 'League disabled successfully.');
+            return redirect()->route('leagues.index')->with('success', 'Liga deshabilitada correctamente.');
         } catch (\Exception $e) {
-            return redirect()->route('leagues.index')->with('error', 'Error disabling league: ' . $e->getMessage());
+            return redirect()->route('leagues.index')->with('error', 'Error desabilitando la liga: ' . $e->getMessage());
         }
     }
 

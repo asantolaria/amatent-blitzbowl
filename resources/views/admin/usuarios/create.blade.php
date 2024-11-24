@@ -29,11 +29,6 @@
             <input type="password" name="password" id="password" class="form-control" required>
         </div>
 
-        <div class="form-group">
-            <label for="admin">Administrator:</label>
-            <input type="checkbox" name="admin" id="admin" value="1">
-        </div>
-
         <button type="submit" class="btn btn-primary">Create User</button>
     </form>
 </div>
