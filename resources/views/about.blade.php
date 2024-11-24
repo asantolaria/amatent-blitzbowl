@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('main-content')
+
 <!-- Page Heading -->
 <h1 class="h3 mb-4 text-gray-800">{{ __('About') }}</h1>
 
@@ -24,6 +25,8 @@
                         <p>La aplicación desarrollada en base al proyecto SB Admin 2 for Laravel.</p>
                     </div>
                 </div>
+
+
 
                 <hr>
 

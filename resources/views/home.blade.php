@@ -1,6 +1,12 @@
 @extends('layouts.admin')
 
 @section('main-content')
+
+@php
+use App\Models\CoachFeature;
+$coachFeatures = CoachFeature::all();
+@endphp
+
 <div class="container">
 
 
@@ -67,8 +73,25 @@
                 <hr>
 
                 <div class="text-center">
-                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="{{ asset('img/blitzbowl-amatent.png') }}" alt="">
+                    <img class="img-fluid px-2 px-sm-4" style="width: 25rem;" src="{{ asset('img/blitzbowl-amatent.png') }}" alt="">
                 </div>
+
+                <hr>
+
+                <div class="row">
+                    <!-- lista de CoachFeatures -->
+                    <div class="col-lg-12">
+                        <h5 class="font-weight-bold">Rasgos de Entrenador</h5>
+                        <p>Los rasgos de entrenador son habilidades especiales que se pueden asignar a los entrenadores de los equipos.</p>
+                        <ul>
+                            @foreach ($coachFeatures as $coachFeature)
+                            <li>[{{$coachFeature->result}}] <strong>{{ $coachFeature->name }}</strong> - {{ $coachFeature->description }}</li>
+                            @endforeach
+
+                        </ul>
+                    </div>
+                </div>
+
 
             </div>
         </div>
